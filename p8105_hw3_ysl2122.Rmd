@@ -7,13 +7,13 @@ output: github_document
 
 # Problem 1
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(p8105.datasets)
 data("ny_noaa")
 ```
 
-In the NOAA dataset, there are `
+In the NOAA dataset, there are `r nrow(ny_noaa)` observations and `r ncol(ny_noaa)` variables
 The goal is to do some exploration of this dataset. To that end, write a shorqt description of the dataset, noting the size and structure of the data, describing some key variables, and indicating the extent to which missing data is an issue. Then, do or answer the following (commenting on the results of each):
 
 - Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. For snowfall, what are the most commonly observed values? Why?
