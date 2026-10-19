@@ -42,7 +42,19 @@ ny_noaa |>
 For snowfall, the most commonly observed values seem to be 0 and NA. This would mean that there are many days where there is no snowfall or the data is simply missing. The third and fourth highest rank values are 25 mm with 31022 observations, and 13 mm with 23095 observations.
 
 ```{r}
-
+noaa_df |>
+  filter(month %in% c(1,7)) |>
+  group_by(id, year, month) |>
+  summarize(
+    mean_tmax = mean (tmax, na.rm = TRUE)
+  ) |>
+  ggplot (aes(x = year, y = mean_tmax, group = id)) +
+  geom_line() + 
+  facet_grid(. ~month) + 
+  labs(
+    x = "Year",
+    y = "Average Max Temperature (C)"
+  )
 ```
 
 - Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
