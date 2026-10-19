@@ -23,13 +23,27 @@ noaa_df =
   mutate(
   year = as.numeric(year),
   month = as.numeric(month),
-  tmax = as.numeric (tmax),
-  tmin = as.numeric (tmin)
+  tmax = as.numeric (tmax)/10,
+  tmin = as.numeric (tmin)/10,
+  prcp = prcp / 10
   )
 ```
-Then, do or answer the following (commenting on the results of each):
 
-- Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. For snowfall, what are the most commonly observed values? Why?
+Date was separated into year, month, and day. Year, month, tmax, and tmin were all converted into numeric variables, and tmax, tmin, and prcp were divided by 10, convertng tenths of degrees C to degrees C and tenths of mm to mm.
+
+```{r}
+ny_noaa |>
+  count(snow) |>
+  mutate(snow_rank = min_rank(desc(n))) |>
+  filter(snow_rank <= 10) |>
+  arrange(snow_rank)
+```
+
+For snowfall, the most commonly observed values seem to be 0 and NA. This would mean that there are many days where there is no snowfall or the data is simply missing. The third and fourth highest rank values are 25 mm with 31022 observations, and 13 mm with 23095 observations.
+
+```{r}
+
+```
 
 - Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
 
