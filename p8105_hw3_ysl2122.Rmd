@@ -13,8 +13,21 @@ library(p8105.datasets)
 data("ny_noaa")
 ```
 
-In the NOAA dataset, there are `r nrow(ny_noaa)` observations and `r ncol(ny_noaa)` variables
-The goal is to do some exploration of this dataset. To that end, write a shorqt description of the dataset, noting the size and structure of the data, describing some key variables, and indicating the extent to which missing data is an issue. Then, do or answer the following (commenting on the results of each):
+In the NOAA dataset, there are `r nrow(ny_noaa)` observations and `r ncol(ny_noaa)` variables total. Using skimr::skim, the dataset includes 1 date variable, 3 numeric variables (e.g. prcp, snow, and snwd), and 3 character variables (e.g. ID, tmax, tmin). Skimr::skim also shows that although there are no missing observations for date, there is substantial missing data in the dataset. Prcp has 145,838 and snow has 381,221 missing observations, with snwd having a higher amount of missing data at 591786. Tmax and tmin have the greatest amount of missing data reaching the 1134000's.
+
+```{r}
+noaa_df = 
+  ny_noaa |>
+  janitor::clean_names() |>
+  separate(date, into = c("year", "month", "day"), sep="-") |>
+  mutate(
+  year = as.numeric(year),
+  month = as.numeric(month),
+  tmax = as.numeric (tmax),
+  tmin = as.numeric (tmin)
+  )
+```
+Then, do or answer the following (commenting on the results of each):
 
 - Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. For snowfall, what are the most commonly observed values? Why?
 
