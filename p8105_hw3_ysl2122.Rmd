@@ -12,7 +12,9 @@ library(tidyverse)
 library(p8105.datasets)
 data("ny_noaa")
 ```
-The goal is to do some exploration of this dataset. To that end, write a short description of the dataset, noting the size and structure of the data, describing some key variables, and indicating the extent to which missing data is an issue. Then, do or answer the following (commenting on the results of each):
+
+In the NOAA dataset, there are `
+The goal is to do some exploration of this dataset. To that end, write a shorqt description of the dataset, noting the size and structure of the data, describing some key variables, and indicating the extent to which missing data is an issue. Then, do or answer the following (commenting on the results of each):
 
 - Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. For snowfall, what are the most commonly observed values? Why?
 
@@ -21,6 +23,16 @@ The goal is to do some exploration of this dataset. To that end, write a short d
 - Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
 
 # Problem 2
+```{r}
+accel_df = 
+  read_csv(
+    "data/nhanes_accel.csv")
+
+covar_df = 
+  read_csv(
+    "data/nhanes_covar.csv")
+```
+
 
 Accelerometers have become an appealing alternative to self-report techniques for studying physical activity in observational studies and clinical trials, largely because of their relative objectivity. During observation periods, the devices can measure MIMS in a short period; one-minute intervals are common. Because accelerometers can be worn comfortably and unobtrusively, they produce around-the-clock observations.
 
@@ -36,6 +48,20 @@ Accelerometer data allows the inspection activity over the course of the day. Ma
 
 
 # Problem 3
+
+```{r}
+jan20_df = 
+  read_csv("data/citibike/jan_2020.csv")
+
+jan24_df = 
+  read_csv("data/citibike/jan_2024.csv")
+
+july20_df = 
+  read_csv("data/citibike/july_2020.csv")
+
+july24_df = 
+  read_csv("data/citibike/july_2024.csv")
+```
 
 Citi Bike is a bike sharing system in New York City; riders can rent pedal-powered or electric bikes from starting stations and return them to another station at their destination. Introduced in 2013, the system is immensely popular and expanded rapidly. Riders who use this system often may become “members” with lower rental rates.
 
