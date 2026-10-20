@@ -10,6 +10,7 @@ output: github_document
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(p8105.datasets)
+library(patchwork)
 data("ny_noaa")
 ```
 
@@ -48,8 +49,9 @@ noaa_df |>
   summarize(
     mean_tmax = mean (tmax, na.rm = TRUE)
   ) |>
+  drop_na(mean_tmax) |>
   ggplot (aes(x = year, y = mean_tmax, group = id)) +
-  geom_line() + 
+  geom_line(alpha = .5) + 
   facet_grid(. ~month) + 
   labs(
     x = "Year",
@@ -57,8 +59,33 @@ noaa_df |>
   )
 ```
 
-- Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
+Observing the two-panel plot, July's weather is warmer than January by about ~25 degrees C or so, and January's temperature fluctuated more throughout the years. The most notable outlier for January is a single scratch line moving downwards to -13ish degrees C around 1982. In contrast, the most notable outlier for July is a scratch line reaching down to 14ish degrees C in 1988 and moving back upwards afterwards.
 
+```{r}
+tmax_tmin_p = 
+  noaa_df |>
+  drop_na(tmax, tmin) |>
+  ggplot (aes(x = tmin, y = tmax)) +
+  geom_hex() + 
+  viridis::scale_fill_viridis() +
+  labs(
+    x = "Minimum temperature (C)",
+    y = "Maximum temperature (C)"  
+  )
+
+snow_p = 
+  noaa_df |>
+  filter(snow > 0, snow < 100) |>
+  mutate(year = as.factor(year)) |>
+  ggplot(aes(x = snow, y = year)) + 
+  geom_boxplot() + 
+  labs(
+    x = "Snowfall (mm)",
+    y = "Year"
+  )
+
+tmax_tmin_p + snow_p
+```
 - Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
 
 # Problem 2
