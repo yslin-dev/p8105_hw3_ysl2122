@@ -91,7 +91,7 @@ tmax_tmin_p + snow_p
 
 The tmax vs tmin plot shows that when minimum temperature increases, maximum temperature increases as well. At about (12, 22), the highest number of weather stations fall in a range between 12 and 22 degrees C. 
 
-Examining the snowfall graph, mediation snowfall has been consistently 25 mm from 1981 to 2010. In the 1900's, the range between minimum and maximum snowfall was consistently between 12 mm and 51 mm, with some exceptions like in 1998. However, since 2006, the minimum and maximum snowfall seems to fluctuate more with more outliers towards the higher end of the snowfall range.
+Examining the snowfall graph, mediation snowfall has been consistently 25 mm from 1981 to 2010. In the 1900's, the interquartile range for snowfall was consistently between 12 mm and 51 mm, with some exceptions like in 1998. However, since 2006,the interquartile range seemed to fluctuate more with more outliers towards the higher end of the snowfall range.
 
 # Problem 2
 ```{r}
@@ -155,19 +155,11 @@ accelerometer_df |>
     x = "Sex",
     y = "Age (years)"
   )
-    
 ```
 
-Variables *MIMS are the MIMS values for each minute of a 24-hour day starting at midnight.
+Looking at the frequency table, it seems that while the less than high school education group and more than high school group had balanced female and male groups, there were more males than females in the high school equivalent group. 
 
-Your final dataset should include all originally observed variables
-exclude participants less than 21 years of age,
-Load, tidy, merge, and otherwise organize the data sets.
-and those with missing demographic data
-
-End encode data with reasonable variable classes (i.e. not numeric, and using factors with the ordering of tables and plots in mind).
-
-Produce a reader-friendly table for the number of men and women in each education category, and create a visualization of the age distributions for men and women in each education category. Comment on these items.
+Among those with less than a high school education, females had a higher median age than men and a slightly smaller interquartile range. When males and females had high school equivalent education, females had a higher median age, as well as a higher interquartile range than men. Men had a higher median age than women among those who had more than a high school education.
 
 ```{r}
 accel_activity = 
@@ -189,7 +181,7 @@ accel_activity |>
   )
 ```
 
-Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.
+Among those with less than high school education, total activity over the day seems to decrease with age, with a little spike around 50-60 years age. Among those with equivalent high school education, total activity over the day rises with age until 40, dipping until 70, and stagnating afterwards. Among those with more than high school education, total activity over the day stagnates until 50 years old, and then drops slowly in a parabolic manner.
 
 ```{r}
 accel_long |>
@@ -202,39 +194,117 @@ accel_long |>
   facet_grid(.~ education) + 
   labs(
     x = "Minute",
-    y = "Average MIMS",
+    y = "Average MMIS",
     color = "Sex"
   )
 ```
 
-Accelerometer data allows the inspection activity over the course of the day. Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. Describe in words any patterns or conclusions you can make based on this graph; including smooth trends may help identify differences.
-
+Among all education groups as well as between men and women, average MMIS seems to decrease at 250 minutes, until increasing to 15 at 7500 minutes, and dipping back down in a parabolic manner afterwards.  Among those with less than high school education, females had a lower dip at 250 minutes compared to men. In contrast, females had a higher peak among those with equivalent high school education and an event higher average activity among those with more than high school education
 
 # Problem 3
 
 ```{r}
 jan20_df = 
-  read_csv("data/citibike/jan_2020.csv")
+  read_csv("data/citibike/jan_2020.csv") |>
+  janitor::clean_names() |>
+  mutate(
+    year = 2020,
+    month = "January"
+  )
 
 jan24_df = 
-  read_csv("data/citibike/jan_2024.csv")
+  read_csv("data/citibike/jan_2024.csv") |>
+  janitor::clean_names() |>
+  mutate(
+    year = 2024,
+    month = "January"
+  )
 
 july20_df = 
-  read_csv("data/citibike/july_2020.csv")
+  read_csv("data/citibike/july_2020.csv") |>
+  janitor::clean_names() |>
+  mutate(
+    year = 2020,
+    month = "July"
+  )
 
 july24_df = 
-  read_csv("data/citibike/july_2024.csv")
+  read_csv("data/citibike/july_2024.csv") |>
+  janitor::clean_names() |>
+  mutate(
+    year = 2024,
+    month = "July"
+  )
+
+citibike_df = 
+  bind_rows(jan20_df, jan24_df, july20_df, july24_df) |>
+  mutate(
+    month = factor(month, levels = c("January","July")),
+  weekdays = factor(
+    weekdays,
+    levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday","Saturday","Sunday")
+  ))
 ```
 
 Citi Bike is a bike sharing system in New York City; riders can rent pedal-powered or electric bikes from starting stations and return them to another station at their destination. Introduced in 2013, the system is immensely popular and expanded rapidly. Riders who use this system often may become “members” with lower rental rates.
 
 This zip file contains data on rides taken on the NYC Citi Bike system. Files contain 1% of all rides with a total duration less than 4 hours in each of four months. Import, clean, and tidy these data, and describe the resulting dataset.
 
+```{r}
+citi_df |>
+  count(year, month, member_casual) |>
+  pivot_wider(
+    names_from = member_casual,
+    values_from = n
+  ) |>
+  knitr::kable()
+```
+
 Produce a reader-friendly table showing the total number of rides in each combination of year and month separating casual riders and Citi Bike members. Comment on these results.
+
+```{r}
+citi_df|>
+  filter(year == 2024, month == "July") |>
+  drop_na(start_station_name) |>
+  count(start_station_name) |>
+  mutate(
+    station_rank = min_rank(desc(n))
+  ) |>
+  filter(station_rank <= 5) |>
+  arrange(station_rank) |>
+  knitr::kable()
+```
 
 Make a table showing the 5 most popular starting stations for July 2024; include the number of rides originating from these stations.
 
+```{r}
+citi_df|>
+  group_by(year, month, weekday) |>
+  summarize(median_duration = median(duration, na.rm = TRUE)) |>
+  ggplot(aes(x = weekdays, y = mediation_duration, color = month, group = month)) + 
+  geom_line() + 
+  geom_point() + 
+  facet_grid(. ~year) + 
+  labs(
+    x = "Day",
+    y = "Median ride duration",
+    color = "Month"
+  )
+```
+
 Make a plot to investigate the effects of day of the week, month, and year on median ride duration. This plot can include one or more panels, but should facilitate comparison across all variables of interest. Comment on your observations from this plot.
+
+```{r}
+citi_df|>
+  filter(year == 2024) |>
+   ggplot(aes(x = member_casual, y = duration)) + 
+  geom_boxplot() +
+  facet_grid(rideable_type ~ month) + 
+  labs(
+    x = "Membership status",
+    y = "Ride duration"
+  )
+```
 
 There were relatively few electric Citi Bikes in 2020, but many more are available now. For data in 2024, make a figure that shows the impact of month, membership status, and bike type on the distribution of ride duration. Comment on your results.
 
