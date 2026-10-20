@@ -10,7 +10,6 @@ output: github_document
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(p8105.datasets)
-library(patchwork)
 data("ny_noaa")
 ```
 
@@ -62,6 +61,9 @@ noaa_df |>
 Observing the two-panel plot, July's weather is warmer than January by about ~25 degrees C or so, and January's temperature fluctuated more throughout the years. The most notable outlier for January is a single scratch line moving downwards to -13ish degrees C around 1982. In contrast, the most notable outlier for July is a scratch line reaching down to 14ish degrees C in 1988 and moving back upwards afterwards.
 
 ```{r}
+
+library(patchwork)
+
 tmax_tmin_p = 
   noaa_df |>
   drop_na(tmax, tmin) |>
@@ -86,7 +88,10 @@ snow_p =
 
 tmax_tmin_p + snow_p
 ```
-- Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+
+The tmax vs tmin plot shows that when minimum temperature increases, maximum temperature increases as well. At about (12, 22), the highest number of weather stations fall in a range between 12 and 22 degrees C. 
+
+Examining the snowfall graph, mediation snowfall has been consistently 25 mm from 1981 to 2010. In the 1900's, the range between minimum and maximum snowfall was consistently between 12 mm and 51 mm, with some exceptions like in 1998. However, since 2006, the minimum and maximum snowfall seems to fluctuate more with more outliers towards the higher end of the snowfall range.
 
 # Problem 2
 ```{r}
