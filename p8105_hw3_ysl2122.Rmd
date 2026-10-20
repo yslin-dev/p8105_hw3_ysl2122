@@ -140,15 +140,15 @@ accel_long =
   )
 
 accelerometer_df |>
-  count(eduaction, sex) |>
+  count(education, sex) |>
   pivot_wider(
     names_from = sex,
     values_from = n
   ) |>
-  knitr:kable()
+  knitr::kable()
 
 accelerometer_df |>
-  gg(aes(x = sex, y = age)) +
+  ggplot(aes(x = sex, y = age)) +
   geom_boxplot() + 
   facet_grid(. ~education) + 
   labs(
@@ -178,7 +178,7 @@ accel_activity =
   )
 
 accel_activity |>
-  gglot(aes(x = age, y = total_activity)) + 
+  ggplot(aes(x = age, y = total_activity)) + 
   geom_point(alpha = 0.5) + 
   geom_smooth(se = FALSE) + 
   facet_grid(. ~ education) + 
